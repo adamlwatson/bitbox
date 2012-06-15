@@ -27,3 +27,12 @@ Ensure that all library dirctories located under `<bitbox-project-root>/librarie
 However, the location may be set to a custom path in the Arduino IDE preferences.
 
 To begin editing the project, open the main project file, `<bitbox-project-root>/bitbox/bitbox.ino`. All other associated files will appear as tabs in the IDE.
+
+#### Third-Party Libraries
+Currently, we're using these 3rd-party libraries:
+
+[ArduinoUnit](http://code.google.com/p/arduinounit/)
+
+[SimpleTimer](http://arduino.cc/playground/Code/SimpleTimer)
+
+[MemoryFree](http://arduino.cc/playground/Code/AvailableMemory)
