@@ -14,9 +14,9 @@ A seriously badass midi phrase looper!
 
 Flexible MIDI Shield has the following jumpers installed:
 
-* D2 for MIDI IN
-* D3 for MIDI OUT
-* ON for MIDI Enable
+* D0 for MIDI IN
+* D1 for MIDI OUT
+* D13 for MIDI Enable
 
 #### Project Setup
 

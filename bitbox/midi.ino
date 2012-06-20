@@ -4,13 +4,23 @@
  *
  */
 
-//  plays a MIDI note.  Doesn't check to see that
-//  cmd is greater than 127, or that data values are  less than 127:
-void noteOn(int cmd, int pitch, int velocity) {
-  SMidi.write(cmd);
-  SMidi.write(pitch);
-  SMidi.write(velocity);
-  
-  Serial << "Event | cmd: " << cmd << ", pitch: " << pitch << ", vel: " << velocity << CRLF;
+void noteOn(byte noteNum, byte velocity, byte channel) {
+  MIDI.sendNoteOn(noteNum, velocity, channel);
 }
+
+void noteOff(byte noteNum, byte velocity, byte channel) {
+  MIDI.sendNoteOff(noteNum, velocity, channel);
+}
+
+
+// MIDI Lib callback handlers
+
+void handleNoteOn (byte channel, byte note, byte velocity) {
+  dlog ("handleNoteOn() channel: %s, note: %s, vel: %s%s", channel, note, velocity, CRLF);  
+}
+
+void handleNoteOff (byte channel, byte note, byte velocity) {
+  dlog ("handleNoteOff() channel: %s, note: %s, vel: %s%s", channel, note, velocity, CRLF);  
+}
+
 
