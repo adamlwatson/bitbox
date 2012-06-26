@@ -15,12 +15,13 @@ void noteOff(byte noteNum, byte velocity, byte channel) {
 
 // MIDI Lib callback handlers
 
+// note: also acts as note off if velocity == 0
 void handleNoteOn (byte channel, byte note, byte velocity) {
-  dlog ("handleNoteOn() channel: %s, note: %s, vel: %s%s", channel, note, velocity, CRLF);  
+  dlog ("handleNoteOn() channel: %d, note: %d, vel: %d%s", channel, note, velocity, CRLF);
 }
 
 void handleNoteOff (byte channel, byte note, byte velocity) {
-  dlog ("handleNoteOff() channel: %s, note: %s, vel: %s%s", channel, note, velocity, CRLF);  
+  dlog ("handleNoteOff() channel: %d, note: %d, vel: %d%s", channel, note, velocity, CRLF);  
 }
 
 

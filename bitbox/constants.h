@@ -8,12 +8,16 @@
 
   
   // app-related
-  #define APP_NAME     "bitbox"
-  #define APP_VERSION  "0.1a"
-  #define DEBUG        true
+  #define APP_NAME                      "bitbox"
+  #define APP_VERSION                   "0.1a"
+  #define DEBUG                         true
+  #define CHECK_MEM                     false
 
   // misc
   #define CRLF "\r\n"
+
+  //expanded memory
+  #define MEMBANK_TOTAL_BYTES  54 * 1024 //55296 bytes
 
   // serial uart (console)
   #define SERIAL_DEBUG_CONSOLE_BAUD_RATE 9600
