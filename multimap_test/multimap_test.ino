@@ -6,6 +6,7 @@
 #include <serstream>
 #include <pnew.cpp>
 
+#include <MemoryFree.h>
 
 using namespace std;
 
@@ -22,7 +23,6 @@ void setup() {
   serial << "\n\r";
   serial << "--------";
   serial << "\n\r";
-  
   
   
   std::multimap<int,string> days;
@@ -68,8 +68,12 @@ void setup() {
     serial << (*it).first << ", " << (*it).second << std::crlf;
   }
   
-
+  serial << std::crlf << freeMemory();
+  
 }
+
+
+
 
 
 void loop() {
