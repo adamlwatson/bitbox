@@ -5,15 +5,12 @@
  */
 
 #if DEBUG
-
 TestSuite unitTests;
 
 // example test
 test(addition) {
     assertEquals(3, 1 + 2);
 }
-
-
 #endif
 
 uint8_t tick_cnt = 0;

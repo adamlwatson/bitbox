@@ -21,7 +21,6 @@
 
 #include <xmem.h>
 
-
 #include "debugging.h"
 
 
@@ -55,9 +54,7 @@ void setup() {
     dlog("---------------------------------%s", CRLF);    
 
   #endif
-    
-  uint8_t  i;
-  uint16_t j;
+
 
   xmem::begin(true);
   
@@ -77,6 +74,7 @@ void setup() {
     dlog("Setting up expanded memory... %s", CRLF);    
   #endif
   
+  uint8_t i;  
   for (i=0; i<8; i++) {
     xmem::setMemoryBank(i,true);
     // init bank of 54k (55,296 bytes)
