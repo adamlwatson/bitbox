@@ -14,6 +14,12 @@
  *  -----------
  *     * begin() function modified to also set __brkval to the RAM start so it doesn't grow into the stack
  *       (thanks to Gene Reeves).
+ *
+ *  Version 1.2:
+ *  -----------
+ *     * Fixed reference to 'bank_' in setMemoryBank().
+ *     * Added include for Arduino.h/WProgram.h if using Arduino IDE. 
+ *     (Contributed by Adam Watson - adam@adamlwatson.com)
  */
 
 // Select which shield you are using, Andy Brown's or the Rugged Circuits QuadRAM Shield.
@@ -23,8 +29,14 @@
 //#define ANDYBROWN_SHIELD
 
 #include <avr/io.h>
-#include "Arduino.h"
 #include "xmem.h"
+
+#if defined(ARDUINO) && ARDUINO >= 100
+#include <Arduino.h>
+#else
+#include <WProgram.h>
+#endif
+
 
 namespace xmem {
 
@@ -56,12 +68,12 @@ namespace xmem {
 #if defined(QUADRAM_SHIELD)
 		// set up the bank selector pins (address lines A16..A18)
 		// these are on pins 42,43,44 (PL7,PL6,PL5). Also, enable
-                // the RAM by driving PD7 (pin 38) low.
+        // the RAM by driving PD7 (pin 38) low.
 
-                pinMode(38, OUTPUT); digitalWrite(38, LOW);
-                pinMode(42, OUTPUT);
-                pinMode(43, OUTPUT);
-                pinMode(44, OUTPUT);
+        pinMode(38, OUTPUT); digitalWrite(38, LOW);
+        pinMode(42, OUTPUT);
+        pinMode(43, OUTPUT);
+        pinMode(44, OUTPUT);
 #elif defined(ANDYBROWN_SHIELD)
 		// set up the bank selector pins (address lines A16..A18)
 		// these are on pins 38,42,43 (PD7,PL7,PL6)
@@ -105,7 +117,7 @@ namespace xmem {
 		// switch in the new bank
 
 #if defined(QUADRAM_SHIELD)
-                // Write lower 3 bits of 'bank' to upper 3 bits of Port L
+        // Write lower 3 bits of 'bank' to upper 3 bits of Port L
 		PORTL = (PORTL & 0x1F) | ((bank_ & 0x7) << 5);
 
 #elif defined(ANDYBROWN_SHIELD)
