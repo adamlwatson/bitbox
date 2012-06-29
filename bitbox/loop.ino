@@ -60,24 +60,6 @@ void loop() {
 
   
   
-  
-  
-  
-/*  
-  // check expanded memory
-  uint8_t  i;
-  uint16_t j;
-
-  for (i=0; i<8; i++) {
-    xmem::setMemoryBank(i, true);  
-    for (j=0; j < MEMBANK_TOTAL_BYTES; j++) {
-      if ( membuf[i][j] != 0xaa+i )
-        fail();
-    }
-  }
-*/
-
-  
 /*
   // play notes from F#-0 (0x1E) to F#-5 (0x5A):
   for (int note = 0x1E; note < 0x5A; note ++) {
