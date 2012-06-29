@@ -20,6 +20,13 @@
  *     * Fixed reference to 'bank_' in setMemoryBank().
  *     * Added include for Arduino.h/WProgram.h if using Arduino IDE. 
  *     (Contributed by Adam Watson - adam@adamlwatson.com)
+ *
+ *
+ *  Version 1.3:
+ *  -----------
+ *     * Added a handful of memory monitor output methods for debugging.
+ *     (Contributed by Adam Watson - adam@adamlwatson.com)
+ *
  */
 
 // Select which shield you are using, Andy Brown's or the Rugged Circuits QuadRAM Shield.
@@ -220,4 +227,137 @@ namespace xmem {
 		results.succeeded=true;
 		return results;
 	}
+    
+    
+    typedef struct __freelist {
+        size_t sz;
+        struct __freelist *nx;
+    } FREELIST;
+    
+    
+    /**
+     * Get the total memory used by the program. The total will
+     * include accounting overhead internal to the library
+     */
+    
+    size_t getMemoryUsed()
+    {
+        size_t used;
+        FREELIST *fp;
+        
+        // __brkval=0 if nothing has been allocated yet
+        
+        if(__brkval==0)
+            return 0;
+        
+        // __brkval moves up from __malloc_heap_start to
+        // __malloc_heap_end as memory is used
+        
+        used=(size_t)__brkval - (size_t)__malloc_heap_start;
+        
+        // memory free'd by you is collected in the free list and
+        // compacted with adjacent blocks. This, combined with malloc's
+        // intelligent picking of candidate blocks drastically reduces
+        // heap fragmentation. Anyway, since blocks in the free list
+        // are available to you at no cost we need to take them off.
+        for(fp=(FREELIST *)__flp;fp;fp=fp->nx)
+            used-=fp->sz+sizeof(size_t);
+        return used;
+    }
+    
+    /**
+     * Get the total free bytes
+     */
+    
+    size_t getFreeMemory()
+    {
+        return (size_t)AVR_STACK_POINTER_REG-
+        (size_t)__malloc_margin-
+        (size_t)__malloc_heap_start-
+        getMemoryUsed();
+    }
+    
+     
+    /**
+     * Get the largest available block that can be successfully
+     * allocated by malloc()
+     */
+    
+    size_t getLargestAvailableMemoryBlock()
+    {
+        size_t a,b;
+        
+        a=getLargestBlockInFreeList();
+        b=getLargestNonFreeListBlock();
+        
+        return a>b ? a : b;
+    }
+    
+    /**
+     * Get the largest block in the free list
+     */
+    
+    size_t getLargestBlockInFreeList()
+    {
+        FREELIST *fp;
+        size_t maxsize=0;
+        
+        for(fp=(FREELIST *)__flp;fp;fp=fp->nx)
+            if(fp->sz>maxsize)
+                maxsize=fp->sz;
+        
+        return maxsize;
+    }
+    
+    /**
+     * Get the number of blocks in the free list
+     */
+    
+    int getNumberOfBlocksInFreeList()
+    {
+        FREELIST *fp;
+        int i;
+        
+        for(i=0,fp=(FREELIST *)__flp;fp;fp=fp->nx,i++);
+        return i;
+    }
+    
+    /**
+     * Get total size of free list (includes library overhead)
+     */
+    
+    size_t getFreeListSize()
+    {
+        FREELIST *fp;
+        size_t size;
+        
+        for(size=0,fp=(FREELIST *)__flp;fp;fp=fp->nx,size+=fp->sz+sizeof(size_t));
+        return size;
+    }
+    
+    /**
+     * Get the largest block that can be successfully allocated
+     * without reuse from the free list
+     */
+    
+    size_t getLargestNonFreeListBlock()
+    {
+        
+        char *cp,*brkval;
+        
+        // this code is an adapted fragment from malloc() itself
+        
+        brkval=(size_t)__brkval == 0 ? (char *)__malloc_heap_start : (char *)__brkval;
+        
+        if((cp=(char *)__malloc_heap_end)==NULL)
+            cp=(char *)AVR_STACK_POINTER_REG-(size_t)__malloc_margin;
+        if(cp<=brkval)
+            return 0;
+        
+        return cp-brkval;
+        
+    }
+    
+    
+    
 }

@@ -14,11 +14,17 @@
   #define CHECK_MEM                     false
 
   // misc
-  #define CRLF "\r\n"
+  #define CRLF std::crlf
 
   //expanded memory
-  #define MEMBANK_TOTAL_BYTES  54 * 1024 //55296 bytes
-
+  #define MEMBANKS_TOTAL 8
+  #define MEMBANK_BYTES_MAX  64 * 1024 //Single memory max. 65536 bytes.
+                                       //Each bank has an 8K Heap, and 
+  
+  #define MEMBANK_BYTES_LOW_THRESHOLD 10 * 1024 // 8k and below reserved for heap
+                                                // 2k buffer to avoid low memory conditions.
+  
+  
   // serial uart (console)
   #define SERIAL_DEBUG_CONSOLE_BAUD_RATE 9600
 

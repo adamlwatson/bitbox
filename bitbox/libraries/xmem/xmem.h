@@ -54,6 +54,14 @@ namespace xmem {
 	SelfTestResults selfTest();
 	void saveHeap(uint8_t bank_);
 	void restoreHeap(uint8_t bank_);
+    
+    size_t getMemoryUsed();
+    size_t getFreeMemory();
+    size_t getLargestAvailableMemoryBlock();
+    size_t getLargestBlockInFreeList();
+    int getNumberOfBlocksInFreeList();
+    size_t getFreeListSize();
+    size_t getLargestNonFreeListBlock();
 }
 
 /*

@@ -17,11 +17,15 @@ void noteOff(byte noteNum, byte velocity, byte channel) {
 
 // note: also acts as note off if velocity == 0
 void handleNoteOn (byte channel, byte note, byte velocity) {
-  dlog ("handleNoteOn() channel: %d, note: %d, vel: %d%s", channel, note, velocity, CRLF);
+  serialmon << "handleNoteOn() channel: " << (int)channel << ", ";
+  serialmon << "note: " << (int)note <<  ", ";
+  serialmon << "vel: " << (int)velocity << CRLF;
 }
 
 void handleNoteOff (byte channel, byte note, byte velocity) {
-  dlog ("handleNoteOff() channel: %d, note: %d, vel: %d%s", channel, note, velocity, CRLF);  
+  serialmon << "handleNoteOff() channel: " << (int)channel << ", ";
+  serialmon << "note: " << (int)note <<  ", ";
+  serialmon << "vel: " << (int)velocity << CRLF;
 }
 
 
