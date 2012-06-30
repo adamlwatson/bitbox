@@ -5,60 +5,63 @@
  */
 
 
-struct msg {
-  byte  type;
-  byte  byte1;
-  byte  byte2;
-  byte  byte3;
-  
-  msg(const byte A, const byte B, const byte C, const byte D) :
-    type(A),byte1(B),byte2(C),byte3(D) {}
-};
-
-
-uint16_t tick_cnt = 0;
-std::multimap<uint16_t,msg> data;
-
   
 void loop() {
   
-  if (tick == 1) {
-    xmem::setMemoryBank(0, true);
-    size_t freeMem = xmem::getFreeMemory();
-    
-    if (freeMem >= MEMBANK_BYTES_LOW_THRESHOLD) {
-      //use some memory...
-      msg midi(0x07, 0x01, 0x02, abs(tick_cnt / 2));
-      
-      data.insert(pair<uint16_t,msg>(tick_cnt,midi));
-            
-      serialmon << "data size: " << data.size() << CRLF;
-      serialmon << "free  mem: " << freeMem << CRLF;
-    } else {
-      multimap<uint16_t,msg>::iterator it;
-      //std::pair<iterator, iterator> itp = data.
-      for (it = data.begin(); it != data.end(); ++it) {
-        serialmon << "midi message at tick " << (*it).first << ": " << (int)(*it).second.type << "," << (int)(*it).second.byte3 << CRLF;
-      }
-      //data.erase(data.begin(), data.end());
-      data.clear();
-      serialmon << "cleared memory!" << CRLF;
-      serialmon << "data size after: " << data.size() << CRLF;
-      serialmon << "free  mem after: " << xmem::getFreeMemory() << CRLF;
-
-    }      
-    //serialmon << "tick     : " << tick_cnt << CRLF;
-    tick = 0;
-    tick_cnt++;
-    lcdout << std::move(0,1);
-    lcdout << "tick: " << tick_cnt;
-   
+  if (gProcessBeat == true) {
+    handleProcessBeat();
   }
   
   MIDI.read();
+
+  if (gRecordState == ENABLED) {
+    //recordMidiEvents();
+    ledRecordOn();
+  } else {
+    ledRecordOff();
+  }
+  
+  
+  if (gBtnIsPressed) {
+    // make sure we haven't already handled the last button press
+    if (!gBtnPressHandled) {
+      handleBtnPress();
+    }
+    checkBtnUp();
+  } else {
+    gBtnPressHandled = false;
+    checkBtnPress();
+  }
+    
 }
 
+void handleProcessBeat() {
+  gProcessBeat = false;
+  gCurPulse = 0;
+  gCurBeat++;
   
+  //xmem::setMemoryBank(0, true);
+  
+  //midi_events.insert(pair<uint16_t,seq_midimsg_t>(beat_cnt,midi));
+  
+  //if (freeMem >= MEMBANK_BYTES_LOW_THRESHOLD) {
+  
+  //serialmon << "tick     : " << beat_cnt << CRLF;
+  
+  
+  lcdout << std::move(0,1);
+  lcdout << "beat: " << gCurBeat;
+  
+#if DEBUG
+  size_t freeMem = xmem::getFreeMemory();		
+  serialmon << "event map size: " << midi_events.size() << CRLF;
+  serialmon << "free memory   : " << freeMem << CRLF;
+#endif
+
+}
+
+
+
   
 /*
   // play notes from F#-0 (0x1E) to F#-5 (0x5A):
@@ -73,3 +76,18 @@ void loop() {
 */  
   
   
+/*
+
+      multimap<uint16_t,seq_midimsg_t>::iterator it;
+      //std::pair<iterator, iterator> itp = midi_events.
+      for (it = midi_events.begin(); it != midi_events.end(); ++it) {
+        serialmon << "midi message at tick " << (*it).first << ": ";
+        serialmon << (int)(*it).second.type << "," << (int)(*it).second.byte3 << CRLF;
+      }
+      //midi_events.erase(midi_events.begin(), midi_events.end());
+      midi_events.clear();
+      serialmon << "cleared memory!" << CRLF;
+      serialmon << "midi_events size after: " << midi_events.size() << CRLF;
+      serialmon << "free  mem after: " << xmem::getFreeMemory() << CRLF;
+
+*/

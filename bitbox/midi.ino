@@ -3,7 +3,8 @@
  *    MIDI-related methods
  *
  */
-
+ 
+ 
 void noteOn(byte noteNum, byte velocity, byte channel) {
   MIDI.sendNoteOn(noteNum, velocity, channel);
 }
@@ -17,15 +18,19 @@ void noteOff(byte noteNum, byte velocity, byte channel) {
 
 // note: also acts as note off if velocity == 0
 void handleNoteOn (byte channel, byte note, byte velocity) {
-  serialmon << "handleNoteOn() channel: " << (int)channel << ", ";
-  serialmon << "note: " << (int)note <<  ", ";
-  serialmon << "vel: " << (int)velocity << CRLF;
+  #if DEBUG
+		serialmon << "handleNoteOn() channel: " << (int)channel << ", ";
+		serialmon << "note: " << (int)note <<  ", ";
+		serialmon << "vel: " << (int)velocity << CRLF;
+	#endif
 }
 
 void handleNoteOff (byte channel, byte note, byte velocity) {
-  serialmon << "handleNoteOff() channel: " << (int)channel << ", ";
-  serialmon << "note: " << (int)note <<  ", ";
-  serialmon << "vel: " << (int)velocity << CRLF;
+  #if DEBUG
+		serialmon << "handleNoteOff() channel: " << (int)channel << ", ";
+		serialmon << "note: " << (int)note <<  ", ";
+		serialmon << "vel: " << (int)velocity << CRLF;
+	#endif
 }
 
 

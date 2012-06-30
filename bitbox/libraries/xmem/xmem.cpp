@@ -228,7 +228,14 @@ namespace xmem {
 		return results;
 	}
     
-    
+
+
+/*
+ *
+ *	Memory monitoring methods
+ *
+ */
+
     typedef struct __freelist {
         size_t sz;
         struct __freelist *nx;
@@ -357,7 +364,6 @@ namespace xmem {
         return cp-brkval;
         
     }
-    
     
     
 }
