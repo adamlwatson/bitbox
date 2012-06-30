@@ -45,6 +45,10 @@ void checkBtnPress() {
     gBtnIsPressed = true;
     gLastBtnPressed = CLEAR;
   }
+  
+  if (gBtnIsPressed) {
+    gBtnPressHandled = false;
+  }
 
 }
 
@@ -90,15 +94,17 @@ void checkBtnUp() {
       }
       break;
   }
+  
+  // see if we caught a button-up
+  if (!gBtnIsPressed) {
+    gLastBtnPressTime = millis();
+  }
 }
 
 
 // handles the result logic for button press.
 void handleBtnPress() {
   
-#ifdef DEBUG
-  serialmon << "handleBtnPress() gLastBtnPressed was " << gLastBtnPressed << CRLF;
-#endif
   switch (gLastBtnPressed) {
     case PLAY:
       handleBtnSequencerPlay();
@@ -121,7 +127,7 @@ void handleBtnPress() {
   }
   
   gBtnPressHandled = true;
-
+  
 }
 
 

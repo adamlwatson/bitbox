@@ -61,7 +61,6 @@
   // serial uart (console)
   #define SERIAL_DEBUG_CONSOLE_BAUD_RATE 9600
 
-
   // lcd
   #define LCD_LINES 2
   #define LCD_CHARS 16
@@ -104,6 +103,8 @@
 	
   #define PIN_TEST_LED 13
 
+  // button debouncing - how long to wait between checking for press after letting go
+  #define BTN_DEBOUNCE_DELAY 100 // ms
 
 
 #endif

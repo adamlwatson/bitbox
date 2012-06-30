@@ -43,8 +43,8 @@ enum BUTTON_PRESSED {
   STOP,
   PLAY,
   REC,
-  UP,
   DOWN,
+  UP,
   CLEAR
 };
 
@@ -56,8 +56,8 @@ enum SEQUENCER_STATE {
 };
 
 enum RECORD_STATE {
-  ENABLED,
-  DISABLED
+  DISABLED,
+  ENABLED
 };
 
 // ** beat counter
@@ -75,6 +75,7 @@ volatile bool     gProcessBeat; // if true, beat process logic will happen in lo
 bool            gBtnIsPressed;
 bool            gBtnPressHandled;
 BUTTON_PRESSED  gLastBtnPressed; //enum
+unsigned long   gLastBtnPressTime; // millis
 
 // special state for record mode, since we want 'latch' behavior
 RECORD_STATE gRecordState;
@@ -168,6 +169,7 @@ void setup() {
   gCurBeat = 0;
   gBeatsPerBar = DEFAULT_BEATS_PER_BAR;
   gBPM = DEFAULT_BPM;
+  gLastBtnPressTime = millis();
   
 	// Init LCD  
   lcdout << std::clear();

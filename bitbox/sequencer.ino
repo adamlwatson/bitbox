@@ -14,7 +14,9 @@ void handleBtnSequencerPlay() {
 
 void handleBtnSequencerRec() {
   gRecordState = (gRecordState == ENABLED) ? DISABLED : ENABLED;
+#if DEBUG
   serialmon << "Record State: " << gRecordState << CRLF;
+#endif
 }
 
 void handleBtnUp() {
