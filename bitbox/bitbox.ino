@@ -43,8 +43,8 @@ enum BUTTON_PRESSED {
   STOP,
   PLAY,
   REC,
-  DOWN,
   UP,
+  DOWN,
   CLEAR
 };
 
@@ -68,21 +68,22 @@ EVENT_MAP		midi_events;
 uint16_t gBPM;
 uint16_t gCurPulse; //current pulse tick of total per quarter note
 
-volatile uint16_t gCurBeat;
-volatile bool     gProcessBeat; // if true, beat process logic will happen in loop()
-                  
+// time sig
+uint8_t gBeatsPerBar;
+uint8_t gBeatUnit;
+
+volatile unsigned long  gCurBeat;
+volatile bool           gProcessBeat; // if true, beat process logic will happen in loop()                  
 
 bool            gBtnIsPressed;
 bool            gBtnPressHandled;
 BUTTON_PRESSED  gLastBtnPressed; //enum
 unsigned long   gLastBtnPressTime; // millis
 
+// state for sequencer
+SEQUENCER_STATE gSeqState;
 // special state for record mode, since we want 'latch' behavior
 RECORD_STATE gRecordState;
-
-// time sig
-uint8_t gBeatsPerBar;
-uint8_t gBeatUnit;
 
 
 
@@ -171,15 +172,7 @@ void setup() {
   MIDI.setHandleNoteOff(handleNoteOff);  
   // note: to disable a callback:
   // MIDI.disconnectCallbackFromType(NoteOn);
-
-	gProcessBeat = false;
-  gCurPulse = 0;
-  gCurBeat = 0;
-  gBeatsPerBar = DEFAULT_BEATS_PER_BAR;
-  gBPM = DEFAULT_BPM;
-  gLastBtnPressTime = millis();
-  
-  
+    
   // Set up hardware pins and button states
   pinMode(PIN_BTN_STOP, INPUT); digitalWrite(PIN_BTN_STOP, HIGH);
   pinMode(PIN_BTN_PLAY, INPUT); digitalWrite(PIN_BTN_PLAY, HIGH);
@@ -188,12 +181,23 @@ void setup() {
   pinMode(PIN_BTN_DOWN, INPUT);  digitalWrite(PIN_BTN_DOWN, HIGH);
   pinMode(PIN_BTN_CLEAR, INPUT);  digitalWrite(PIN_BTN_CLEAR, HIGH);
   
-  pinMode(PIN_TEST_LED, OUTPUT);
+  gProcessBeat = false;
+  gCurPulse = 0;
+  gCurBeat = 0;
+  gBeatsPerBar = DEFAULT_BEATS_PER_BAR;
+  gBPM = DEFAULT_BPM;
+  gLastBtnPressTime = millis();
   
   gLastBtnPressed = NONE;
   gBtnIsPressed = false;
   gBtnPressHandled = false;
+  gSeqState = STOPPED;
   gRecordState = DISABLED;
+  
+  
+  pinMode(PIN_TEMPO_LED, OUTPUT);
+  pinMode(PIN_PLAY_LED, OUTPUT);
+  pinMode(PIN_REC_LED, OUTPUT);
   
   
   delay(SPLASH_DELAY_MS);

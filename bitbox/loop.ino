@@ -8,7 +8,7 @@
   
 void loop() {
   //uint8_t LastBtnPressDeltaMS = 
-  
+
   if (gProcessBeat == true) {
     handleProcessBeat();
   }
@@ -17,23 +17,19 @@ void loop() {
 
   if (gRecordState == ENABLED) {
     //recordMidiEvents();
-    ledRecordOn();
-  } else {
-    ledRecordOff();
   }
   
   if (gBtnIsPressed) {
     // make sure we haven't already handled the last button press    
     if (!gBtnPressHandled) {
       // check button after debouncing
-      unsigned long time = millis();
-      int elapsed = (time - gLastBtnPressTime);      
-      if (elapsed >= BTN_DEBOUNCE_DELAY) {
+      if ((millis() - gLastBtnPressTime) >= BTN_DEBOUNCE_DELAY) {
 #if DEBUG
         serialmon << ">> handling button: " << gLastBtnPressed << CRLF;
 #endif        
         handleBtnPress();        
       } else {
+        
         gBtnPressHandled = true; 
         gBtnIsPressed = false;
       }

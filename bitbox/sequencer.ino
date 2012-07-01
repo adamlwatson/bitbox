@@ -6,17 +6,21 @@
 
 void handleBtnSequencerStop() {
   sequencerTimerStop();
+  gSeqState = STOPPED;
+  ledOff(PIN_PLAY_LED);
+
 }
 
 void handleBtnSequencerPlay() {
   sequencerTimerStart();
+  gSeqState = PLAYING;
+  ledOn(PIN_PLAY_LED);
 }
 
 void handleBtnSequencerRec() {
   gRecordState = (gRecordState == ENABLED) ? DISABLED : ENABLED;
-#if DEBUG
-  serialmon << "Record State: " << gRecordState << CRLF;
-#endif
+  // toggle state of record led
+  (gRecordState == ENABLED) ? ledOn(PIN_REC_LED) : ledOff(PIN_REC_LED);
 }
 
 void handleBtnUp() {
@@ -75,7 +79,7 @@ ISR( TIMER4_COMPA_vect ) {
   gCurPulse++;
   if ( gCurPulse == PPQ ) {
     gProcessBeat = true;
-    gCurPulse = 0;
+    gCurPulse = 1;
   } 
 }
 

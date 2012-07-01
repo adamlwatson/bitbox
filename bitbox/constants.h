@@ -37,7 +37,7 @@
  Hardware:
  
  150 or greater Ohm resistors on indicator LEDs
- 10K Ohm resistors on the switches
+ 10K Ohm resistors on the button switches
  
 */
 
@@ -105,7 +105,10 @@
 	#define PIN_BTN_DOWN  A10
 	#define PIN_BTN_CLEAR A11
 	
-  #define PIN_TEST_LED 13
+
+  #define PIN_TEMPO_LED 11
+  #define PIN_PLAY_LED 12
+  #define PIN_REC_LED 13
 
   // button debouncing - how long to wait between checking for press after letting go
   #define BTN_DEBOUNCE_DELAY 133 // ms

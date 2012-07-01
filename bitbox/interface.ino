@@ -134,13 +134,13 @@ void handleBtnPress() {
 
 
 
-// LED for record state
+// LED on / off
 
-void ledRecordOn() {
-  digitalWrite(PIN_TEST_LED, HIGH);
+void ledOn(uint8_t pin) {
+  digitalWrite(pin, HIGH);
 }
 
-void ledRecordOff() {
-  digitalWrite(PIN_TEST_LED, LOW);
+void ledOff(uint8_t pin) {
+  digitalWrite(pin, LOW);
 }
 
