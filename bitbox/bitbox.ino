@@ -112,8 +112,16 @@ std::olcdstream lcdout(lcd);
 
 void setup() {
   
+	// Init LCD  
   lcd.begin(LCD_CHARS, LCD_LINES);
   std::olcdstream lcdout(lcd);
+  lcdout << std::clear();
+  
+  int appname_count = (sizeof(APP_NAME) - 1) / 2;
+  int appver_count = (sizeof(APP_VERSION) - 1) / 2;
+  
+  lcdout << std::move((LCD_CHARS / 2) - (appname_count + appver_count) - 1, 0);
+  lcdout << APP_NAME << " " << APP_VERSION;
 
   #if DEBUG
     Serial3.begin(SERIAL_DEBUG_CONSOLE_BAUD_RATE);
@@ -171,15 +179,6 @@ void setup() {
   gBPM = DEFAULT_BPM;
   gLastBtnPressTime = millis();
   
-	// Init LCD  
-  lcdout << std::clear();
-  
-  int appname_count = (sizeof(APP_NAME) - 1) / 2;
-  int appver_count = (sizeof(APP_VERSION) - 1) / 2;
-  
-  lcdout << std::move((LCD_CHARS / 2) - (appname_count + appver_count) - 1, 0);
-  lcdout << APP_NAME << " " << APP_VERSION;
-
   
   // Set up hardware pins and button states
   pinMode(PIN_BTN_STOP, INPUT); digitalWrite(PIN_BTN_STOP, HIGH);
@@ -196,6 +195,11 @@ void setup() {
   gBtnPressHandled = false;
   gRecordState = DISABLED;
   
+  
+  delay(SPLASH_DELAY_MS);
+  lcdout << std::clear();
+
+
   // Setup complete!
 #if DEBUG
   serialmon << "MIDI_DPIN_ENABLE: " << MIDI_DPIN_ENABLE << CRLF;
@@ -206,8 +210,7 @@ void setup() {
   }
 #endif
   
-  delay(SPLASH_DELAY_MS);
-  lcdout << std::clear();
+  
 }
 
 void failMemoryCheck() {

@@ -34,6 +34,10 @@
  Timer4: Pin 6, 7 and 8
  Timer5: Pin 46, 45 and 44
 
+ Hardware:
+ 
+ 150 or greater Ohm resistors on indicator LEDs
+ 10K Ohm resistors on the switches
  
 */
 
@@ -104,7 +108,7 @@
   #define PIN_TEST_LED 13
 
   // button debouncing - how long to wait between checking for press after letting go
-  #define BTN_DEBOUNCE_DELAY 100 // ms
+  #define BTN_DEBOUNCE_DELAY 133 // ms
 
 
 #endif
