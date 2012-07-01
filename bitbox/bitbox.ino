@@ -77,6 +77,7 @@ volatile bool           gProcessBeat; // if true, beat process logic will happen
 
 bool            gBtnIsPressed;
 bool            gBtnPressHandled;
+BUTTON_PRESSED  gCurBtnPressed; //enum
 BUTTON_PRESSED  gLastBtnPressed; //enum
 unsigned long   gLastBtnPressTime; // millis
 
@@ -189,6 +190,7 @@ void setup() {
   gLastBtnPressTime = millis();
   
   gLastBtnPressed = NONE;
+  gLastBtnPressed = STOP;
   gBtnIsPressed = false;
   gBtnPressHandled = false;
   gSeqState = STOPPED;

@@ -25,7 +25,7 @@ void loop() {
       // check button after debouncing
       if ((millis() - gLastBtnPressTime) >= BTN_DEBOUNCE_DELAY) {
 #if DEBUG
-        serialmon << ">> handling button: " << gLastBtnPressed << CRLF;
+        serialmon << ">> handling button: " << gCurBtnPressed << CRLF;
 #endif        
         handleBtnPress();        
       } else {

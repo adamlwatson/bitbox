@@ -13,37 +13,37 @@ void checkBtnPress() {
   state = digitalRead(PIN_BTN_PLAY);
   if (state == HIGH) {
     gBtnIsPressed = true;
-    gLastBtnPressed = PLAY;
+    gCurBtnPressed = PLAY;
   }
   
   state = digitalRead(PIN_BTN_STOP);
   if (state == HIGH) {
-    gBtnIsPressed = true;
-    gLastBtnPressed = STOP;  
+    gBtnIsPressed = true;  
+    gCurBtnPressed = STOP;
   }
   
   state = digitalRead(PIN_BTN_REC);
   if (state == HIGH) {
     gBtnIsPressed = true;
-    gLastBtnPressed = REC;
+    gCurBtnPressed = REC;
   }
 
   state = digitalRead(PIN_BTN_UP);
   if (state == HIGH) {
     gBtnIsPressed = true;
-    gLastBtnPressed = UP;
+    gCurBtnPressed = UP;
   }
   
   state = digitalRead(PIN_BTN_DOWN);
   if (state == HIGH) {
     gBtnIsPressed = true;
-    gLastBtnPressed = DOWN;
+    gCurBtnPressed = DOWN;
   }
 
   state = digitalRead(PIN_BTN_CLEAR);
   if (state == HIGH) {
     gBtnIsPressed = true;
-    gLastBtnPressed = CLEAR;
+    gCurBtnPressed = CLEAR;
   }
   
   if (gBtnIsPressed) {
@@ -56,41 +56,47 @@ void checkBtnPress() {
 void checkBtnUp() {
   uint8_t state;
   
-  switch (gLastBtnPressed) {
+  switch (gCurBtnPressed) {
     case PLAY:
       state = digitalRead(PIN_BTN_PLAY);
       if (state == LOW) {
         gBtnIsPressed = false;
+        gLastBtnPressed = PLAY;
       }
       break;
     case STOP:
       state = digitalRead(PIN_BTN_STOP);
       if (state == LOW) {
         gBtnIsPressed = false;
+        gLastBtnPressed = STOP;
       }
       break;
     case REC:
       state = digitalRead(PIN_BTN_REC);
       if (state == LOW) {
         gBtnIsPressed = false;
+        gLastBtnPressed = REC;
       }
       break;
     case UP:
       state = digitalRead(PIN_BTN_UP);
       if (state == LOW) {
         gBtnIsPressed = false;
+        gLastBtnPressed = UP;
       }
       break;
     case DOWN:
       state = digitalRead(PIN_BTN_DOWN);
       if (state == LOW) {
         gBtnIsPressed = false;
+        gLastBtnPressed = DOWN;
       }
       break;
     case CLEAR:
       state = digitalRead(PIN_BTN_CLEAR);
       if (state == LOW) {
         gBtnIsPressed = false;
+        gLastBtnPressed = CLEAR;
       }
       break;
   }
@@ -104,8 +110,7 @@ void checkBtnUp() {
 
 // handles the result logic for button press.
 void handleBtnPress() {
-  
-  switch (gLastBtnPressed) {
+  switch (gCurBtnPressed) {
     case PLAY:
       handleBtnSequencerPlay();
       break;

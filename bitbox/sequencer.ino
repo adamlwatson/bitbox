@@ -8,7 +8,11 @@ void handleBtnSequencerStop() {
   sequencerTimerStop();
   gSeqState = STOPPED;
   ledOff(PIN_PLAY_LED);
-
+  if (gLastBtnPressed == STOP) {
+    gCurBeat = 0;
+    lcdout << std::move(0,1);
+    lcdout << "beat: " << gCurBeat; 
+  }
 }
 
 void handleBtnSequencerPlay() {
