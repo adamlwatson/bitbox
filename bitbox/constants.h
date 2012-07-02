@@ -92,9 +92,12 @@
   // using TIMER4 for hardware clock
 	#define PPQ                   96
   #define DEFAULT_BPM           120
+
   #define DEFAULT_BEATS_PER_BAR 4 // time signature, upper numeric
   #define DEFAULT_BEAT_UNIT     4 // time signature, lower numeric
-	#define TIMER4_PRESCALER      8
+  #define DEFAULT_TOTAL_BARS    8 // total bars in a pattern
+
+  #define TIMER4_PRESCALER      8
 	
 
 	// button pin mappings
@@ -110,8 +113,12 @@
   #define PIN_PLAY_LED 12
   #define PIN_REC_LED 13
 
+  #define DEFAULT_LED_BRIGHTNESS 10;
+
   // button debouncing - how long to wait between checking for press after letting go
   #define BTN_DEBOUNCE_DELAY 133 // ms
 
+  #define TEMPO_LED_INTERVAL 5 //how many ms to leave on the tempo led once triggered.
+  #define UPDATE_DISPLAY_DELAY  10 //ms
 
 #endif

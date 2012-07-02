@@ -6,6 +6,36 @@
  */
 
 
+// Turn an LED on or off
+void ledOn(uint8_t pin, uint8_t val) {
+  analogWrite(pin, val);
+}
+
+// Turn an LED on or off
+void ledOn(uint8_t pin) {
+  analogWrite(pin, HIGH);
+}
+
+void ledOff(uint8_t pin) {
+  analogWrite(pin, LOW);
+}
+
+
+
+// -----
+
+void updateDisplay() {
+  
+  lcdout << std::move(0,1);
+  lcdout << "beat: " << gSeqPos.beat << "   ";
+
+}
+
+
+
+
+// Button Handlers
+
 // checks all buttons for a press
 void checkBtnPress() {
   uint8_t state;
@@ -135,17 +165,4 @@ void handleBtnPress() {
   
 }
 
-
-
-
-
-// LED on / off
-
-void ledOn(uint8_t pin) {
-  digitalWrite(pin, HIGH);
-}
-
-void ledOff(uint8_t pin) {
-  digitalWrite(pin, LOW);
-}
 

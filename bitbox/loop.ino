@@ -7,13 +7,18 @@
 
   
 void loop() {
-  //uint8_t LastBtnPressDeltaMS = 
-
-  if (gProcessBeat == true) {
-    handleProcessBeat();
-  }
+  unsigned long time = millis();
   
   MIDI.read();
+
+  if (gProcessTempoBeat == true) {
+    handleProcessTempoBeat();
+  }
+
+  if (gProcessPatternBeat == true) {
+    handleProcessPatternBeat();
+  }
+  
 
   if (gRecordState == ENABLED) {
     //recordMidiEvents();
@@ -23,13 +28,13 @@ void loop() {
     // make sure we haven't already handled the last button press    
     if (!gBtnPressHandled) {
       // check button after debouncing
-      if ((millis() - gLastBtnPressTime) >= BTN_DEBOUNCE_DELAY) {
-#if DEBUG
-        serialmon << ">> handling button: " << gCurBtnPressed << CRLF;
-#endif        
+      if ((time - gLastBtnPressTime) >= BTN_DEBOUNCE_DELAY) {
+        #if DEBUG
+          serialmon << ">> handling button: " << gCurBtnPressed << CRLF;
+        #endif
         handleBtnPress();        
       } else {
-        
+        //debounce the erratic input
         gBtnPressHandled = true; 
         gBtnIsPressed = false;
       }
@@ -39,33 +44,47 @@ void loop() {
   } else {
     checkBtnPress();
   }
+  
+  // update the display
+  if (time % UPDATE_DISPLAY_DELAY == 0) {
+    updateDisplay();
+  }
+  
+  // run global simpletimer object 1 tick
+  // this handles setTimeout() callback timing
+  gTimer.run();
 }
 
-void handleProcessBeat() {
-  gProcessBeat = false;
-  gCurPulse = 0;
-  gCurBeat++;
+
+void handleProcessPatternBeat() {
+  gProcessPatternBeat = false;
   
   //xmem::setMemoryBank(0, true);
-  
   //midi_events.insert(pair<uint16_t,seq_midimsg_t>(beat_cnt,midi));
-  
   //if (freeMem >= MEMBANK_BYTES_LOW_THRESHOLD) {
-  
   //serialmon << "tick     : " << beat_cnt << CRLF;
-  
-  
-  lcdout << std::move(0,1);
-  lcdout << "beat: " << gCurBeat;
-  
+    
 #if DEBUG
   size_t freeMem = xmem::getFreeMemory();		
-  serialmon << "event map size: " << midi_events.size() << CRLF;
+  serialmon << "event map size: " << gMidiEvents.size() << CRLF;
   serialmon << "free memory   : " << freeMem << CRLF;
 #endif
 
 }
 
+
+
+void turnOffTempoLed() {
+  ledOff(PIN_TEMPO_LED);
+}
+
+void handleProcessTempoBeat() {
+  gProcessTempoBeat = false;
+
+  ledOn(PIN_TEMPO_LED, global_settings.ledBrightness);
+  // set up timer to turn off the led in 10ms;
+  gTimer.setTimeout(5, turnOffTempoLed);
+}
 
 
   

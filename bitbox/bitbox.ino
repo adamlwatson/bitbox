@@ -6,6 +6,8 @@
 
 // ** includes
 #include "constants.h"
+#include <avr/pgmspace.h>
+#include <SimpleTimer.h>
 
 // arduino libs
 #include <MIDI.h>
@@ -26,13 +28,13 @@ using namespace std;
 
 
 // ** sequencer midi message storage
-struct seq_midimsg_t {
+struct SEQ_MIDIMSG_T {
   byte  type;
   byte  byte1;
   byte  byte2;
   byte  byte3;
   
-  seq_midimsg_t(const byte A, const byte B, const byte C, const byte D) :
+  SEQ_MIDIMSG_T(const byte A, const byte B, const byte C, const byte D) :
     type(A),byte1(B),byte2(C),byte3(D) {}
 };
 
@@ -49,31 +51,57 @@ enum BUTTON_PRESSED {
 };
 
 // sequencer states
-enum SEQUENCER_STATE {
+enum SEQUENCER_STATE_E {
   STOPPED,
   PLAYING,
   PAUSED
 };
 
-enum RECORD_STATE {
+enum RECORD_STATE_E {
   DISABLED,
   ENABLED
 };
 
-// ** beat counter
-typedef std::multimap<uint16_t,seq_midimsg_t> EVENT_MAP;
-EVENT_MAP		midi_events;
+// TODO: save and recall of global settings
+struct GLOBAL_SETTINGS_T {
+  uint16_t version;
 
-// ** sequencer / interrupt vars
-uint16_t gBPM;
-uint16_t gCurPulse; //current pulse tick of total per quarter note
+  uint16_t  tempoBPM;      
+  byte      enableTempoLed;//0-1 
+  uint8_t   ledBrightness; //0-255
+};
 
-// time sig
-uint8_t gBeatsPerBar;
-uint8_t gBeatUnit;
+// TODO: save and recall of patten settings
+struct PATTERN_SETTINGS_T {
+  // version specifier
+  uint16_t version;
+  
+  // length
+  uint16_t totalBars;
+  // time sig
+  uint8_t beatsPerBar;
+  uint8_t beatUnit;
+}; 
 
-volatile unsigned long  gCurBeat;
-volatile bool           gProcessBeat; // if true, beat process logic will happen in loop()                  
+struct SEQUENCER_POSITION_T {
+  volatile uint8_t        pulse;
+  volatile unsigned long  beat;
+};
+
+
+// midi event storage
+typedef std::multimap<uint16_t,SEQ_MIDIMSG_T> EVENT_MAP;
+EVENT_MAP gMidiEvents;
+
+
+// ** global sequencer variables for time / song position
+SEQUENCER_POSITION_T  gSeqPos;
+volatile bool         gProcessPatternBeat; // if true, pattern sequence beat process will happen in next loop() call
+
+// 'global' tempo features, such as flashing tempo beat LED
+volatile bool     gProcessTempoBeat; // if true, tempo beat process logic will happen in next loop() call                  
+volatile uint8_t  gTempoPulse; // global index number of current pulse of current beat
+                                  // used for flashing the tempo led on beat
 
 bool            gBtnIsPressed;
 bool            gBtnPressHandled;
@@ -82,11 +110,13 @@ BUTTON_PRESSED  gLastBtnPressed; //enum
 unsigned long   gLastBtnPressTime; // millis
 
 // state for sequencer
-SEQUENCER_STATE gSeqState;
+SEQUENCER_STATE_E gSeqState;
 // special state for record mode, since we want 'latch' behavior
-RECORD_STATE gRecordState;
+RECORD_STATE_E    gRecordState;
 
-
+// structs for settings
+GLOBAL_SETTINGS_T   global_settings;
+PATTERN_SETTINGS_T  pattern_settings;
 
 // ** utility macros
 
@@ -94,7 +124,8 @@ RECORD_STATE gRecordState;
 #define cbi( var, mask ) ( (var) &= (uint8_t) ~( 1 << mask ) ) // Clear Bit
 void volatile nop(void) { asm __volatile__ ("nop"); }
 
-
+// ** timer object(s)
+SimpleTimer gTimer;
 
 // ** lcd and serial streaming
 LiquidCrystal 	lcd(LCD_DPIN1, LCD_DPIN2, LCD_DPIN3, LCD_DPIN4, LCD_DPIN5, LCD_DPIN6);
@@ -182,17 +213,29 @@ void setup() {
   pinMode(PIN_BTN_DOWN, INPUT);  digitalWrite(PIN_BTN_DOWN, HIGH);
   pinMode(PIN_BTN_CLEAR, INPUT);  digitalWrite(PIN_BTN_CLEAR, HIGH);
   
-  gProcessBeat = false;
-  gCurPulse = 0;
-  gCurBeat = 0;
-  gBeatsPerBar = DEFAULT_BEATS_PER_BAR;
-  gBPM = DEFAULT_BPM;
-  gLastBtnPressTime = millis();
+  gProcessTempoBeat = false;
+  gProcessPatternBeat = false;
   
+  // setup pattern settings
+  // TODO: persist and load from SD on boot
+  setSequencerToPosition(0,0);
+  pattern_settings.version = 0;
+  initSequencerPattern();
+  
+  // setup global settings.
+  // TODO: Persist and load from SD on boot
+  global_settings.version = 0;
+  global_settings.tempoBPM = DEFAULT_BPM;
+  global_settings.enableTempoLed = 1;
+  global_settings.ledBrightness = DEFAULT_LED_BRIGHTNESS;
+  
+  
+  gLastBtnPressTime = millis();
   gLastBtnPressed = NONE;
   gLastBtnPressed = STOP;
   gBtnIsPressed = false;
   gBtnPressHandled = false;
+  
   gSeqState = STOPPED;
   gRecordState = DISABLED;
   
@@ -204,7 +247,10 @@ void setup() {
   
   delay(SPLASH_DELAY_MS);
   lcdout << std::clear();
-
+  
+  // start hardware timer
+  sequencerTimerStart();
+  
 
   // Setup complete!
 #if DEBUG

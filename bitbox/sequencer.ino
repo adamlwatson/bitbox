@@ -5,38 +5,69 @@
  */
 
 void handleBtnSequencerStop() {
-  sequencerTimerStop();
   gSeqState = STOPPED;
   ledOff(PIN_PLAY_LED);
   if (gLastBtnPressed == STOP) {
-    gCurBeat = 0;
-    lcdout << std::move(0,1);
-    lcdout << "beat: " << gCurBeat; 
+    setSequencerToPosition(0,0);
   }
 }
 
+// set sequencer playhead to the beat and pulse sepcified
+void setSequencerToPosition(unsigned long beat, uint8_t pulse) {
+  gSeqPos.pulse = pulse;
+  gSeqPos.beat = beat;
+  gProcessPatternBeat = false;
+}
+
+// start playback from current pos
 void handleBtnSequencerPlay() {
-  sequencerTimerStart();
+  // match up global tempo pulse with the playhead pulse
+  gTempoPulse = gSeqPos.pulse;
+  //start playing
   gSeqState = PLAYING;
-  ledOn(PIN_PLAY_LED);
+  ledOn(PIN_PLAY_LED, global_settings.ledBrightness);
 }
 
 void handleBtnSequencerRec() {
   gRecordState = (gRecordState == ENABLED) ? DISABLED : ENABLED;
   // toggle state of record led
-  (gRecordState == ENABLED) ? ledOn(PIN_REC_LED) : ledOff(PIN_REC_LED);
+  (gRecordState == ENABLED) ? ledOn(PIN_REC_LED, global_settings.ledBrightness) : ledOff(PIN_REC_LED);
 }
 
 void handleBtnUp() {
-
+  setSequencerBPM(++global_settings.tempoBPM);
 }
 
 void handleBtnDown() {
-  
+  setSequencerBPM(--global_settings.tempoBPM);
 }
 
 void handleBtnClear() {
   
+}
+
+
+// initialize pattern settings to default
+void initSequencerPattern() {
+  pattern_settings.beatUnit = DEFAULT_BEAT_UNIT;
+  pattern_settings.beatsPerBar = DEFAULT_BEATS_PER_BAR;
+  pattern_settings.totalBars = 8;
+}
+
+
+// returns the current bar number of playback position
+uint16_t getCurrentBar() {
+  return (uint16_t) abs(gSeqPos.beat / pattern_settings.beatsPerBar);
+  
+}
+
+// getter for readability
+unsigned long getCurrentBeat() {
+  return gSeqPos.beat;
+}
+
+unsigned long getTotalTicksPerBar() {
+  return (unsigned long)PPQ * pattern_settings.beatsPerBar;
 }
 
 
@@ -60,10 +91,11 @@ void setSequencerTimerFrequency( uint16_t bpm ) {
 // starts the interrupt timer for the ppq click
 void sequencerTimerStart() {
   noInterrupts();
+  gTempoPulse = 0;
   TCCR4A = TCCR4B = 0;
   bitWrite( TCCR4B, CS41, 1 ); // Set prescaler to 8
   bitWrite( TCCR4B, WGM42, 1 ); // CTC Mode
-  setSequencerTimerFrequency( gBPM ); // TODO : change BPM from a constant to a variable for on-the-fly changes in timer frequency
+  setSequencerTimerFrequency( global_settings.tempoBPM );
   bitWrite( TIMSK4, OCIE4A, 1 ); // Enable Timer Compare Interrupt
   interrupts();
 }
@@ -80,11 +112,23 @@ void sequencerTimerStop( void ) {
 // Interrupt service routine for Timer4
 // Logic for sequencer timer...  count pulses, and beats
 ISR( TIMER4_COMPA_vect ) {
-  gCurPulse++;
-  if ( gCurPulse == PPQ ) {
-    gProcessBeat = true;
-    gCurPulse = 1;
-  } 
+
+  gTempoPulse++;
+  if ( gTempoPulse == PPQ ) {
+    gProcessTempoBeat = true;
+    gTempoPulse = 0;
+  }
+  
+  if (gSeqState == PLAYING) {
+    gSeqPos.pulse++;
+    if ( gSeqPos.pulse == PPQ ) {
+      gProcessPatternBeat = true;
+      gSeqPos.pulse = 0;
+      gSeqPos.beat++;
+    }
+    
+  }  
+
 }
 
 
