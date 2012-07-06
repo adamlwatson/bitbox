@@ -18,6 +18,7 @@
 #include <iterator>
 #include <string>
 #include <map>
+#include <set>
 #include <serstream>
 #include <lcdostream>
 #include <pnew.cpp>
@@ -38,6 +39,21 @@ struct SEQ_MIDIMSG_T {
     type(A),byte1(B),byte2(C),byte3(D) {}
 };
 
+class MidiEvent {
+public:
+  byte type;
+  byte byte1;
+  byte byte2;
+  byte byte3;
+  
+};
+
+class MidiEventComp{
+public:
+  bool operator()(MidiEvent e1, MidiEvent e2) {
+    return (e1.byte1 < e2.byte1) ? true : false;
+  }
+};
 
 // enum for currently pushed button
 enum BUTTON_PRESSED {
@@ -86,12 +102,18 @@ struct PATTERN_SETTINGS_T {
 struct SEQUENCER_POSITION_T {
   volatile uint8_t        pulse;
   volatile unsigned long  beat;
+  bool lastPulsePlayed; // true if events have already been sent out for this tick
 };
 
 
-// midi event storage
-typedef std::multimap<uint16_t,SEQ_MIDIMSG_T> EVENT_MAP;
-EVENT_MAP gMidiEvents;
+// midi event storage for the whole pattern
+typedef std::multimap<uint16_t,MidiEvent> PATTERN_EVENT_MAP;
+PATTERN_EVENT_MAP gMidiEvents;
+
+// recorded note set for the current tick
+// used to avoid recording duplicate events during a tick
+typedef std::set<MidiEvent, MidiEventComp> TICK_RECORD_SET;
+TICK_RECORD_SET gRecBuffer;
 
 // ** global sequencer variables for time / song position
 SEQUENCER_POSITION_T  gSeqPos;
@@ -235,6 +257,9 @@ void setup() {
   
   gSeqState = STOPPED;
   gRecordState = DISABLED;
+  gSeqPos.pulse = 0;
+  gSeqPos.beat = 0;
+  gSeqPos.lastPulsePlayed = 0;
   
   pinMode(PIN_TEMPO_LED, OUTPUT);
   pinMode(PIN_PLAY_LED, OUTPUT);

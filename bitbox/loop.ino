@@ -7,12 +7,17 @@
   
 void loop() {
   unsigned long time = millis();
+
+  if ((gSeqPos.lastPulsePlayed != gSeqPos.pulse) && (gSeqState == PLAYING)) {
+    serialmon << "last pulse played: " << (unsigned long)gSeqPos.lastPulsePlayed;
+    serialmon << " cur pulse: " << (unsigned long) gSeqPos.pulse << CRLF;
+    playSeqEventsAtPulse(gSeqPos.pulse);
+    gSeqPos.lastPulsePlayed = gSeqPos.pulse;
+  }
+
   
   MIDI.read();
   
-  if (gSeqState == PLAYING) {
-    playSeqEventsAtPulse(gSeqPos.pulse);
-  }
   
   if (gProcessTempoBeat == true) {
     handleProcessTempoBeat();

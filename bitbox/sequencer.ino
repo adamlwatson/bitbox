@@ -49,20 +49,32 @@ bool isRunRecording() {
   serialmon << gSeqState << " : " << gRecordState << CRLF;
 #endif
   
-  if ((gSeqState == PLAYING) && (gRecordState == ENABLED))
+  if ((gSeqState == PLAYING) && (gRecordState == ENABLED)) {
     return true;
-  else
+  } else {
     return false;
-}
+  }
 
+}
 
 void recordSeqEvent(byte type, byte channel, byte note, byte velocity) {
   
   xmem::setMemoryBank(0, true);
-  SEQ_MIDIMSG_T msg = SEQ_MIDIMSG_T(type, channel, note, velocity);
+
+  MidiEvent evt;
   
+  evt.type = 0x00;
+  evt.byte1 = channel;
+  evt.byte2 = note;
+  evt.byte3 = velocity;  
   
-  gMidiEvents.insert(pair<uint16_t,SEQ_MIDIMSG_T>(getAbsoluteSeqPulse(), msg));
+#if DEBUG
+  
+  serialmon << "recording at pulse " << (uint16_t)gSeqPos.pulse << ": " << (int)channel << ", " << (int)note << ", " << (int)velocity << CRLF;
+  gMidiEvents.insert(pair<uint16_t,MidiEvent>(getAbsoluteSeqPulse(), evt));
+  
+#endif
+  
   //if (freeMem >= MEMBANK_BYTES_LOW_THRESHOLD) {
   //serialmon << "tick     : " << beat_cnt << CRLF;
 }
@@ -75,20 +87,19 @@ void recordSeqEvent(byte type, byte channel, byte note, byte velocity) {
 
 void playSeqEventsAtPulse(unsigned long pulse) {
   
-  pair<multimap<uint16_t, SEQ_MIDIMSG_T>::iterator, multimap<uint16_t, SEQ_MIDIMSG_T>::iterator> range = gMidiEvents.equal_range(getAbsoluteSeqPulse());
+  pair<multimap<uint16_t, MidiEvent>::iterator, multimap<uint16_t, MidiEvent>::iterator> range = gMidiEvents.equal_range(getAbsoluteSeqPulse());
   
-  multimap<uint16_t, SEQ_MIDIMSG_T>::iterator it2;
+  multimap<uint16_t, MidiEvent>::iterator it2;
+  
   for (it2 = range.first; it2 != range.second; ++it2)
   {
 #if DEBUG
-    serialmon << "midi message playing at pulse " << (*it2).first << ": ";
+    serialmon << "playing at pulse " << (*it2).first << ": ";
     serialmon /*<< (int)(*it2).second.type << "," */<< (int)(*it2).second.byte1 << "," << (int)(*it2).second.byte2 << "," << (int)(*it2).second.byte3 << CRLF;
 #endif
-    MIDI.sendNoteOn((*it2).second.byte1, (*it2).second.byte2, (*it2).second.byte3);
+    MIDI.sendNoteOn((*it2).second.byte2, (*it2).second.byte3, (*it2).second.byte1);
 
   }
-
-
 }
 
 
@@ -129,7 +140,7 @@ void handleBtnDown() {
 }
 
 void handleBtnClear() {
-  multimap<uint16_t, SEQ_MIDIMSG_T>::iterator it;
+  multimap<uint16_t, MidiEvent>::iterator it;
   //std::pair<iterator, iterator> itp = midi_events.
   for (it = gMidiEvents.begin(); it != gMidiEvents.end(); ++it) {
 #if DEBUG
