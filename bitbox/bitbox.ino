@@ -93,7 +93,6 @@ struct SEQUENCER_POSITION_T {
 typedef std::multimap<uint16_t,SEQ_MIDIMSG_T> EVENT_MAP;
 EVENT_MAP gMidiEvents;
 
-
 // ** global sequencer variables for time / song position
 SEQUENCER_POSITION_T  gSeqPos;
 volatile bool         gProcessPatternBeat; // if true, pattern sequence beat process will happen in next loop() call
@@ -103,10 +102,9 @@ volatile bool     gProcessTempoBeat; // if true, tempo beat process logic will h
 volatile uint8_t  gTempoPulse; // global index number of current pulse of current beat
                                   // used for flashing the tempo led on beat
 
-bool            gBtnIsPressed;
-bool            gBtnPressHandled;
 BUTTON_PRESSED  gCurBtnPressed; //enum
 BUTTON_PRESSED  gLastBtnPressed; //enum
+bool            gBtnPressHandled;
 unsigned long   gLastBtnPressTime; // millis
 
 // state for sequencer
@@ -115,8 +113,8 @@ SEQUENCER_STATE_E gSeqState;
 RECORD_STATE_E    gRecordState;
 
 // structs for settings
-GLOBAL_SETTINGS_T   global_settings;
-PATTERN_SETTINGS_T  pattern_settings;
+GLOBAL_SETTINGS_T   _globalSettings;
+PATTERN_SETTINGS_T  _patternSettings;
 
 // ** utility macros
 
@@ -219,26 +217,24 @@ void setup() {
   // setup pattern settings
   // TODO: persist and load from SD on boot
   setSequencerToPosition(0,0);
-  pattern_settings.version = 0;
+  _patternSettings.version = 0;
   initSequencerPattern();
   
   // setup global settings.
   // TODO: Persist and load from SD on boot
-  global_settings.version = 0;
-  global_settings.tempoBPM = DEFAULT_BPM;
-  global_settings.enableTempoLed = 1;
-  global_settings.ledBrightness = DEFAULT_LED_BRIGHTNESS;
+  _globalSettings.version = 0;
+  _globalSettings.tempoBPM = DEFAULT_BPM;
+  _globalSettings.enableTempoLed = 1;
+  _globalSettings.ledBrightness = DEFAULT_LED_BRIGHTNESS;
   
   
   gLastBtnPressTime = millis();
-  gLastBtnPressed = NONE;
+  gCurBtnPressed = NONE;
   gLastBtnPressed = STOP;
-  gBtnIsPressed = false;
   gBtnPressHandled = false;
   
   gSeqState = STOPPED;
   gRecordState = DISABLED;
-  
   
   pinMode(PIN_TEMPO_LED, OUTPUT);
   pinMode(PIN_PLAY_LED, OUTPUT);

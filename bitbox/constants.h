@@ -63,7 +63,7 @@
                                                 // 2k buffer to avoid low memory conditions.
   
   // serial uart (console)
-  #define SERIAL_DEBUG_CONSOLE_BAUD_RATE 9600
+  #define SERIAL_DEBUG_CONSOLE_BAUD_RATE 115200
 
   // lcd
   #define LCD_LINES 2
@@ -116,9 +116,9 @@
   #define DEFAULT_LED_BRIGHTNESS 10;
 
   // button debouncing - how long to wait between checking for press after letting go
-  #define BTN_DEBOUNCE_DELAY 133 // ms
+  #define BTN_DEBOUNCE_DELAY 150 // ms
 
   #define TEMPO_LED_INTERVAL 5 //how many ms to leave on the tempo led once triggered.
-  #define UPDATE_DISPLAY_DELAY  10 //ms
+  #define UPDATE_DISPLAY_DELAY  33 //ms
 
 #endif

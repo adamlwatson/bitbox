@@ -41,43 +41,27 @@ void checkBtnPress() {
   uint8_t state;
   
   state = digitalRead(PIN_BTN_PLAY);
-  if (state == HIGH) {
-    gBtnIsPressed = true;
-    gCurBtnPressed = PLAY;
-  }
-  
+  if (state == HIGH) gCurBtnPressed = PLAY;
+
   state = digitalRead(PIN_BTN_STOP);
-  if (state == HIGH) {
-    gBtnIsPressed = true;  
-    gCurBtnPressed = STOP;
-  }
+  if (state == HIGH) gCurBtnPressed = STOP;
   
   state = digitalRead(PIN_BTN_REC);
-  if (state == HIGH) {
-    gBtnIsPressed = true;
-    gCurBtnPressed = REC;
-  }
+  if (state == HIGH) gCurBtnPressed = REC;
 
   state = digitalRead(PIN_BTN_UP);
-  if (state == HIGH) {
-    gBtnIsPressed = true;
-    gCurBtnPressed = UP;
-  }
+  if (state == HIGH) gCurBtnPressed = UP;
   
   state = digitalRead(PIN_BTN_DOWN);
-  if (state == HIGH) {
-    gBtnIsPressed = true;
-    gCurBtnPressed = DOWN;
-  }
+  if (state == HIGH) gCurBtnPressed = DOWN;
 
   state = digitalRead(PIN_BTN_CLEAR);
-  if (state == HIGH) {
-    gBtnIsPressed = true;
-    gCurBtnPressed = CLEAR;
-  }
+  if (state == HIGH) gCurBtnPressed = CLEAR;
   
-  if (gBtnIsPressed) {
+  nop();
+  if (gCurBtnPressed != NONE) {
     gBtnPressHandled = false;
+    
   }
 
 }
@@ -90,49 +74,49 @@ void checkBtnUp() {
     case PLAY:
       state = digitalRead(PIN_BTN_PLAY);
       if (state == LOW) {
-        gBtnIsPressed = false;
+        gCurBtnPressed = NONE;
         gLastBtnPressed = PLAY;
       }
       break;
     case STOP:
       state = digitalRead(PIN_BTN_STOP);
       if (state == LOW) {
-        gBtnIsPressed = false;
+        gCurBtnPressed = NONE;
         gLastBtnPressed = STOP;
       }
       break;
     case REC:
       state = digitalRead(PIN_BTN_REC);
       if (state == LOW) {
-        gBtnIsPressed = false;
+        gCurBtnPressed = NONE;
         gLastBtnPressed = REC;
       }
       break;
     case UP:
       state = digitalRead(PIN_BTN_UP);
       if (state == LOW) {
-        gBtnIsPressed = false;
+        gCurBtnPressed = NONE;
         gLastBtnPressed = UP;
       }
       break;
     case DOWN:
       state = digitalRead(PIN_BTN_DOWN);
       if (state == LOW) {
-        gBtnIsPressed = false;
+        gCurBtnPressed = NONE;
         gLastBtnPressed = DOWN;
       }
       break;
     case CLEAR:
       state = digitalRead(PIN_BTN_CLEAR);
       if (state == LOW) {
-        gBtnIsPressed = false;
+        gCurBtnPressed = NONE;
         gLastBtnPressed = CLEAR;
       }
       break;
   }
   
   // see if we caught a button-up
-  if (!gBtnIsPressed) {
+  if (gCurBtnPressed == NONE) {
     gLastBtnPressTime = millis();
   }
 }
