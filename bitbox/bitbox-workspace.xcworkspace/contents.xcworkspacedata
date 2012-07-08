@@ -1,0 +1,570 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "container:constants.h">
+   </FileRef>
+   <FileRef
+      location = "container:bitbox.ino">
+   </FileRef>
+   <FileRef
+      location = "group:../../code/bitbox/bitbox/interface.ino">
+   </FileRef>
+   <FileRef
+      location = "group:../../code/bitbox/bitbox/loop.ino">
+   </FileRef>
+   <FileRef
+      location = "group:../../code/bitbox/bitbox/midi.ino">
+   </FileRef>
+   <FileRef
+      location = "group:../../code/bitbox/bitbox/sequencer.ino">
+   </FileRef>
+   <Group
+      location = "group:../../code/bitbox/bitbox/libraries"
+      name = "libraries">
+      <Group
+         location = "group:avr-stl"
+         name = "avr-stl">
+         <Group
+            location = "group:include"
+            name = "include">
+            <FileRef
+               location = "group:algorithm">
+            </FileRef>
+            <FileRef
+               location = "group:avr_config.h">
+            </FileRef>
+            <FileRef
+               location = "group:basic_definitions">
+            </FileRef>
+            <FileRef
+               location = "group:bitset">
+            </FileRef>
+            <FileRef
+               location = "group:cctype">
+            </FileRef>
+            <FileRef
+               location = "group:char_traits.h">
+            </FileRef>
+            <FileRef
+               location = "group:concept_checks.h">
+            </FileRef>
+            <FileRef
+               location = "group:container_concepts.h">
+            </FileRef>
+            <FileRef
+               location = "group:cstddef">
+            </FileRef>
+            <FileRef
+               location = "group:deque">
+            </FileRef>
+            <FileRef
+               location = "group:functional">
+            </FileRef>
+            <FileRef
+               location = "group:hash_map">
+            </FileRef>
+            <FileRef
+               location = "group:hash_set">
+            </FileRef>
+            <FileRef
+               location = "group:iomanip">
+            </FileRef>
+            <FileRef
+               location = "group:ios">
+            </FileRef>
+            <FileRef
+               location = "group:iosfwd">
+            </FileRef>
+            <FileRef
+               location = "group:iostream">
+            </FileRef>
+            <FileRef
+               location = "group:istream">
+            </FileRef>
+            <FileRef
+               location = "group:istream_helpers">
+            </FileRef>
+            <FileRef
+               location = "group:iterator">
+            </FileRef>
+            <FileRef
+               location = "group:lcdostream">
+            </FileRef>
+            <FileRef
+               location = "group:limits">
+            </FileRef>
+            <FileRef
+               location = "group:list">
+            </FileRef>
+            <FileRef
+               location = "group:locale">
+            </FileRef>
+            <FileRef
+               location = "group:map">
+            </FileRef>
+            <FileRef
+               location = "group:memory">
+            </FileRef>
+            <FileRef
+               location = "group:new">
+            </FileRef>
+            <FileRef
+               location = "group:numeric">
+            </FileRef>
+            <FileRef
+               location = "group:ostream">
+            </FileRef>
+            <FileRef
+               location = "group:ostream_helpers">
+            </FileRef>
+            <FileRef
+               location = "group:pnew.cpp">
+            </FileRef>
+            <FileRef
+               location = "group:queue">
+            </FileRef>
+            <FileRef
+               location = "group:sequence_concepts.h">
+            </FileRef>
+            <FileRef
+               location = "group:serstream">
+            </FileRef>
+            <FileRef
+               location = "group:set">
+            </FileRef>
+            <FileRef
+               location = "group:slist">
+            </FileRef>
+            <FileRef
+               location = "group:sstream">
+            </FileRef>
+            <FileRef
+               location = "group:stack">
+            </FileRef>
+            <FileRef
+               location = "group:stl_algo.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_algobase.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_alloc.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_bvector.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_config.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_construct.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_ctraits_fns.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_deque.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_function.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_hash_fun.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_hash_map.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_hash_set.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_hashtable.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_heap.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_iterator.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_iterator_base.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_list.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_map.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_multimap.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_multiset.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_numeric.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_pair.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_queue.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_range_errors.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_raw_storage_iter.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_relops.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_set.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_slist.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_stack.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_string_fwd.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_tempbuf.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_tree.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_uninitialized.h">
+            </FileRef>
+            <FileRef
+               location = "group:stl_vector.h">
+            </FileRef>
+            <FileRef
+               location = "group:streambuf">
+            </FileRef>
+            <FileRef
+               location = "group:string">
+            </FileRef>
+            <FileRef
+               location = "group:type_traits.h">
+            </FileRef>
+            <FileRef
+               location = "group:utility">
+            </FileRef>
+            <FileRef
+               location = "group:valarray">
+            </FileRef>
+            <FileRef
+               location = "group:vector">
+            </FileRef>
+         </Group>
+      </Group>
+      <Group
+         location = "group:digitalWriteFast"
+         name = "digitalWriteFast">
+         <Group
+            location = "group:bonus"
+            name = "bonus">
+            <Group
+               location = "group:digitalWrite"
+               name = "digitalWrite">
+               <FileRef
+                  location = "group:digital_write_macros.h">
+               </FileRef>
+               <FileRef
+                  location = "group:keywords.txt">
+               </FileRef>
+               <FileRef
+                  location = "group:readMe for digitalWrite.pdf">
+               </FileRef>
+               <FileRef
+                  location = "group:wiring.h">
+               </FileRef>
+               <FileRef
+                  location = "group:wiring_digital.c">
+               </FileRef>
+            </Group>
+         </Group>
+         <FileRef
+            location = "group:digitalWriteFast.h">
+         </FileRef>
+         <FileRef
+            location = "group:keywords.txt">
+         </FileRef>
+         <FileRef
+            location = "group:Readme.pdf">
+         </FileRef>
+      </Group>
+      <Group
+         location = "group:MIDI"
+         name = "MIDI">
+         <Group
+            location = "group:doc"
+            name = "doc">
+            <FileRef
+               location = "group:callbacks.txt">
+            </FileRef>
+            <FileRef
+               location = "group:Doxyfile">
+            </FileRef>
+            <Group
+               location = "group:html"
+               name = "html">
+               <FileRef
+                  location = "group:a00001.html">
+               </FileRef>
+               <FileRef
+                  location = "group:a00002.html">
+               </FileRef>
+               <FileRef
+                  location = "group:a00003.html">
+               </FileRef>
+               <FileRef
+                  location = "group:a00003_source.html">
+               </FileRef>
+               <FileRef
+                  location = "group:a00004.html">
+               </FileRef>
+               <FileRef
+                  location = "group:a00004_source.html">
+               </FileRef>
+               <FileRef
+                  location = "group:a00006.html">
+               </FileRef>
+               <FileRef
+                  location = "group:a00007.html">
+               </FileRef>
+               <FileRef
+                  location = "group:annotated.html">
+               </FileRef>
+               <FileRef
+                  location = "group:bc_s.png">
+               </FileRef>
+               <FileRef
+                  location = "group:classes.html">
+               </FileRef>
+               <FileRef
+                  location = "group:closed.png">
+               </FileRef>
+               <FileRef
+                  location = "group:doxygen.css">
+               </FileRef>
+               <FileRef
+                  location = "group:doxygen.png">
+               </FileRef>
+               <FileRef
+                  location = "group:files.html">
+               </FileRef>
+               <FileRef
+                  location = "group:functions.html">
+               </FileRef>
+               <FileRef
+                  location = "group:functions_func.html">
+               </FileRef>
+               <FileRef
+                  location = "group:functions_vars.html">
+               </FileRef>
+               <FileRef
+                  location = "group:globals.html">
+               </FileRef>
+               <FileRef
+                  location = "group:globals_defs.html">
+               </FileRef>
+               <FileRef
+                  location = "group:globals_enum.html">
+               </FileRef>
+               <FileRef
+                  location = "group:globals_eval.html">
+               </FileRef>
+               <FileRef
+                  location = "group:globals_type.html">
+               </FileRef>
+               <FileRef
+                  location = "group:globals_vars.html">
+               </FileRef>
+               <FileRef
+                  location = "group:index.html">
+               </FileRef>
+               <FileRef
+                  location = "group:jquery.js">
+               </FileRef>
+               <FileRef
+                  location = "group:nav_f.png">
+               </FileRef>
+               <FileRef
+                  location = "group:nav_h.png">
+               </FileRef>
+               <FileRef
+                  location = "group:open.png">
+               </FileRef>
+               <FileRef
+                  location = "group:tab_a.png">
+               </FileRef>
+               <FileRef
+                  location = "group:tab_b.png">
+               </FileRef>
+               <FileRef
+                  location = "group:tab_h.png">
+               </FileRef>
+               <FileRef
+                  location = "group:tab_s.png">
+               </FileRef>
+               <FileRef
+                  location = "group:tabs.css">
+               </FileRef>
+            </Group>
+         </Group>
+         <Group
+            location = "group:examples"
+            name = "examples">
+            <Group
+               location = "group:MIDI_Basic_IO"
+               name = "MIDI_Basic_IO">
+               <FileRef
+                  location = "group:MIDI_Basic_IO.pde">
+               </FileRef>
+            </Group>
+            <Group
+               location = "group:MIDI_Callbacks"
+               name = "MIDI_Callbacks">
+               <FileRef
+                  location = "group:MIDI_Callbacks.ino">
+               </FileRef>
+            </Group>
+            <Group
+               location = "group:MIDI_Input"
+               name = "MIDI_Input">
+               <FileRef
+                  location = "group:MIDI_Input.pde">
+               </FileRef>
+            </Group>
+         </Group>
+         <FileRef
+            location = "group:keywords.txt">
+         </FileRef>
+         <FileRef
+            location = "group:MIDI.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:MIDI.h">
+         </FileRef>
+      </Group>
+      <Group
+         location = "group:SD"
+         name = "SD">
+         <Group
+            location = "group:examples"
+            name = "examples">
+            <Group
+               location = "group:CardInfo"
+               name = "CardInfo">
+               <FileRef
+                  location = "group:CardInfo.pde">
+               </FileRef>
+            </Group>
+            <Group
+               location = "group:Datalogger"
+               name = "Datalogger">
+               <FileRef
+                  location = "group:Datalogger.pde">
+               </FileRef>
+            </Group>
+            <Group
+               location = "group:Files"
+               name = "Files">
+               <FileRef
+                  location = "group:Files.pde">
+               </FileRef>
+            </Group>
+            <Group
+               location = "group:listfiles"
+               name = "listfiles">
+               <FileRef
+                  location = "group:listfiles.pde">
+               </FileRef>
+            </Group>
+            <Group
+               location = "group:ReadWrite"
+               name = "ReadWrite">
+               <FileRef
+                  location = "group:ReadWrite.pde">
+               </FileRef>
+            </Group>
+         </Group>
+         <FileRef
+            location = "group:File.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:keywords.txt">
+         </FileRef>
+         <FileRef
+            location = "group:README.txt">
+         </FileRef>
+         <FileRef
+            location = "group:SD.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:SD.h">
+         </FileRef>
+         <Group
+            location = "group:utility"
+            name = "utility">
+            <FileRef
+               location = "group:FatStructs.h">
+            </FileRef>
+            <FileRef
+               location = "group:Sd2Card.cpp">
+            </FileRef>
+            <FileRef
+               location = "group:Sd2Card.h">
+            </FileRef>
+            <FileRef
+               location = "group:Sd2PinMap.h">
+            </FileRef>
+            <FileRef
+               location = "group:SdFat.h">
+            </FileRef>
+            <FileRef
+               location = "group:SdFatmainpage.h">
+            </FileRef>
+            <FileRef
+               location = "group:SdFatUtil.h">
+            </FileRef>
+            <FileRef
+               location = "group:SdFile.cpp">
+            </FileRef>
+            <FileRef
+               location = "group:SdInfo.h">
+            </FileRef>
+            <FileRef
+               location = "group:SdVolume.cpp">
+            </FileRef>
+         </Group>
+      </Group>
+      <Group
+         location = "group:SimpleTimer"
+         name = "SimpleTimer">
+         <FileRef
+            location = "group:SimpleTimer.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:SimpleTimer.h">
+         </FileRef>
+      </Group>
+      <Group
+         location = "group:xmem"
+         name = "xmem">
+         <FileRef
+            location = "group:xmem.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:xmem.h">
+         </FileRef>
+      </Group>
+   </Group>
+</Workspace>

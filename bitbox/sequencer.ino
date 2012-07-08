@@ -7,10 +7,10 @@
 
 // utility
 
-// set sequencer playhead to the beat and pulse sepcified
-void setSequencerToPosition(unsigned long beat, uint8_t pulse) {
+// set sequencer playhead to the pulse sepcified
+void moveSequencerToPulse(uint8_t pulse) {
   gSeqPos.pulse = pulse;
-  gSeqPos.beat = beat;
+  gSeqPos.lastPulsePlayed = pulse;
   gProcessPatternBeat = false;
 }
 
@@ -24,31 +24,36 @@ void initSequencerPattern() {
 
 // returns the current bar number of playback position
 uint16_t getCurrentBar() {
-  return (uint16_t) abs(gSeqPos.beat / _patternSettings.beatsPerBar);
+  return (uint16_t) abs(gSeqPos.pulse / PPQ / _patternSettings.beatsPerBar) + 1;
   
 }
 
 // getter for readability
 unsigned long getCurrentBeat() {
-  return gSeqPos.beat;
+  return (gSeqPos.pulse / PPQ) + 1;
 }
+
+
+// getter for readability
+unsigned long getCurrentBeatOfBar() {
+  return ((gSeqPos.pulse / PPQ) % _patternSettings.beatsPerBar) + 1;
+}
+
+
+// returns the current tick of the current beat
+uint8_t getCurrentPulseOfBeat() {
+  return (gSeqPos.pulse % PPQ) + 1;
+}
+
 
 unsigned long getTotalTicksPerBar() {
   return (unsigned long)PPQ * _patternSettings.beatsPerBar;
 }
 
-// returns the current pattern position in pulses, relative to start of pattern
-unsigned long getAbsoluteSeqPulse() {
-  return gSeqPos.pulse + (gSeqPos.beat * PPQ);
-}
 
 
 
-bool isRunRecording() {
-#if DEBUG
-  serialmon << gSeqState << " : " << gRecordState << CRLF;
-#endif
-  
+bool isRunRecording() {  
   if ((gSeqState == PLAYING) && (gRecordState == ENABLED)) {
     return true;
   } else {
@@ -68,12 +73,12 @@ void recordSeqEvent(byte type, byte channel, byte note, byte velocity) {
   evt.byte2 = note;
   evt.byte3 = velocity;  
   
-#if DEBUG
-  
+#if DEBUG  
   serialmon << "recording at pulse " << (uint16_t)gSeqPos.pulse << ": " << (int)channel << ", " << (int)note << ", " << (int)velocity << CRLF;
-  gMidiEvents.insert(pair<uint16_t,MidiEvent>(getAbsoluteSeqPulse(), evt));
-  
 #endif
+
+  gMidiEvents.insert(pair<uint16_t,MidiEvent>(gSeqPos.pulse, evt));
+  
   
   //if (freeMem >= MEMBANK_BYTES_LOW_THRESHOLD) {
   //serialmon << "tick     : " << beat_cnt << CRLF;
@@ -87,7 +92,7 @@ void recordSeqEvent(byte type, byte channel, byte note, byte velocity) {
 
 void playSeqEventsAtPulse(unsigned long pulse) {
   
-  pair<multimap<uint16_t, MidiEvent>::iterator, multimap<uint16_t, MidiEvent>::iterator> range = gMidiEvents.equal_range(getAbsoluteSeqPulse());
+  pair<multimap<uint16_t, MidiEvent>::iterator, multimap<uint16_t, MidiEvent>::iterator> range = gMidiEvents.equal_range(gSeqPos.pulse);
   
   multimap<uint16_t, MidiEvent>::iterator it2;
   
@@ -104,7 +109,6 @@ void playSeqEventsAtPulse(unsigned long pulse) {
 
 
 
-
 // sequencer button handlers
 
 
@@ -112,7 +116,7 @@ void handleBtnSequencerStop() {
   gSeqState = STOPPED;
   ledOff(PIN_PLAY_LED);
   if (gLastBtnPressed == STOP) {
-    setSequencerToPosition(0,0);
+    moveSequencerToPulse(0);
   }
 }
 
@@ -144,9 +148,10 @@ void handleBtnClear() {
   //std::pair<iterator, iterator> itp = midi_events.
   for (it = gMidiEvents.begin(); it != gMidiEvents.end(); ++it) {
 #if DEBUG
-    serialmon << "midi message at tick " << (*it).first << ": ";
+    serialmon << "recorded midi message at tick " << (*it).first << ": ";
     serialmon << (int)(*it).second.type << "," << (int)(*it).second.byte1 << "," << (int)(*it).second.byte2 << "," << (int)(*it).second.byte3 << CRLF;
 #endif
+    
   }
 
   
@@ -174,6 +179,7 @@ void setSequencerTimerFrequency( uint16_t bpm ) {
 // starts the interrupt timer for the ppq click
 void sequencerTimerStart() {
   noInterrupts();
+  //sync up Tempo Pulse with the song position
   gTempoPulse = 0;
   TCCR4A = TCCR4B = 0;
   bitWrite( TCCR4B, CS41, 1 ); // Set prescaler to 8
@@ -198,20 +204,18 @@ void sequencerTimerStop( void ) {
 ISR( TIMER4_COMPA_vect ) {
 
   gTempoPulse++;
-  if ( gTempoPulse == PPQ ) {
+  if ( gTempoPulse % PPQ == 0 ) {
     gProcessTempoBeat = true;
     gTempoPulse = 0;
   }
   
   if (gSeqState == PLAYING) {
     gSeqPos.pulse++;
-    if ( gSeqPos.pulse == PPQ ) {
+    if ( gSeqPos.pulse % PPQ == 0 ) {
       gProcessPatternBeat = true;
-      gSeqPos.pulse = 0;
-      gSeqPos.beat++;
     }
-    
   }  
+  
 
 }
 

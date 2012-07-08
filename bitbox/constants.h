@@ -86,12 +86,20 @@
     #define MIDI_DPIN_ENABLE 17
   #endif
 
+  // rotary encoder
+
+  #define PIN_ENCODER_2   A12
+  #define PIN_ENCODER_1   A13
+  #define PIN_ENCODER_BTN A14
+
   #define MIDI_BAUD_RATE 31250
   
   // sequencer / seq timer
   // using TIMER4 for hardware clock
-	#define PPQ                   96
+	#define PPQ                   96 //I want this to be at least 96, but processor speed is an issue.
   #define DEFAULT_BPM           120
+  #define MAX_BPM               250
+  #define MIN_BPM               10
 
   #define DEFAULT_BEATS_PER_BAR 4 // time signature, upper numeric
   #define DEFAULT_BEAT_UNIT     4 // time signature, lower numeric
@@ -119,6 +127,11 @@
   #define BTN_DEBOUNCE_DELAY 150 // ms
 
   #define TEMPO_LED_INTERVAL 5 //how many ms to leave on the tempo led once triggered.
-  #define UPDATE_DISPLAY_DELAY  33 //ms
+  #define UPDATE_DISPLAY_DELAY  150 //ms
+
+  #define CHECK_ENCODER_DELAY 3 //ms
+  #define ENCODER_INCREMENT       1
+  #define ENCODER_INCREMENT_FAST 10 // amount to increment when button on encoder is pressed while turning
+
 
 #endif

@@ -21,13 +21,20 @@ void ledOff(uint8_t pin) {
 }
 
 
-
-// -----
+// Update the LCD Display
 
 void updateDisplay() {
+  //lcdout << std::clear();
+  
+  lcdout << std::move(0,0);
+
+  lcdout << (uint16_t)getCurrentBar() << "." << (unsigned long)getCurrentBeatOfBar();
+  //need to revisit this to shore up usage of time signatures
+  lcdout << "." << (unsigned long)getCurrentPulseOfBeat() / (PPQ/_patternSettings.beatsPerBar) + 1;
+  lcdout << "   ";
   
   lcdout << std::move(0,1);
-  lcdout << "beat: " << gSeqPos.beat << "   ";
+  lcdout << _globalSettings.tempoBPM << " bpm";
 
 }
 
@@ -40,22 +47,22 @@ void updateDisplay() {
 void checkBtnPress() {
   uint8_t state;
   
-  state = digitalRead(PIN_BTN_PLAY);
+  state = digitalReadFast(PIN_BTN_PLAY);
   if (state == HIGH) gCurBtnPressed = PLAY;
 
-  state = digitalRead(PIN_BTN_STOP);
+  state = digitalReadFast(PIN_BTN_STOP);
   if (state == HIGH) gCurBtnPressed = STOP;
   
-  state = digitalRead(PIN_BTN_REC);
+  state = digitalReadFast(PIN_BTN_REC);
   if (state == HIGH) gCurBtnPressed = REC;
 
-  state = digitalRead(PIN_BTN_UP);
+  state = digitalReadFast(PIN_BTN_UP);
   if (state == HIGH) gCurBtnPressed = UP;
   
-  state = digitalRead(PIN_BTN_DOWN);
+  state = digitalReadFast(PIN_BTN_DOWN);
   if (state == HIGH) gCurBtnPressed = DOWN;
 
-  state = digitalRead(PIN_BTN_CLEAR);
+  state = digitalReadFast(PIN_BTN_CLEAR);
   if (state == HIGH) gCurBtnPressed = CLEAR;
   
   nop();
@@ -72,42 +79,42 @@ void checkBtnUp() {
   
   switch (gCurBtnPressed) {
     case PLAY:
-      state = digitalRead(PIN_BTN_PLAY);
+      state = digitalReadFast(PIN_BTN_PLAY);
       if (state == LOW) {
         gCurBtnPressed = NONE;
         gLastBtnPressed = PLAY;
       }
       break;
     case STOP:
-      state = digitalRead(PIN_BTN_STOP);
+      state = digitalReadFast(PIN_BTN_STOP);
       if (state == LOW) {
         gCurBtnPressed = NONE;
         gLastBtnPressed = STOP;
       }
       break;
     case REC:
-      state = digitalRead(PIN_BTN_REC);
+      state = digitalReadFast(PIN_BTN_REC);
       if (state == LOW) {
         gCurBtnPressed = NONE;
         gLastBtnPressed = REC;
       }
       break;
     case UP:
-      state = digitalRead(PIN_BTN_UP);
+      state = digitalReadFast(PIN_BTN_UP);
       if (state == LOW) {
         gCurBtnPressed = NONE;
         gLastBtnPressed = UP;
       }
       break;
     case DOWN:
-      state = digitalRead(PIN_BTN_DOWN);
+      state = digitalReadFast(PIN_BTN_DOWN);
       if (state == LOW) {
         gCurBtnPressed = NONE;
         gLastBtnPressed = DOWN;
       }
       break;
     case CLEAR:
-      state = digitalRead(PIN_BTN_CLEAR);
+      state = digitalReadFast(PIN_BTN_CLEAR);
       if (state == LOW) {
         gCurBtnPressed = NONE;
         gLastBtnPressed = CLEAR;

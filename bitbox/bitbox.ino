@@ -7,12 +7,12 @@
 // ** includes
 #include "constants.h"
 #include <avr/pgmspace.h>
+#include <SD.h>
 #include <SimpleTimer.h>
-
-// arduino libs
 #include <MIDI.h>
 #include <LiquidCrystal.h>
 #include <Streaming.h>
+#include <digitalWriteFast.h>
 
 // ** c++ stl
 #include <iterator>
@@ -22,22 +22,12 @@
 #include <serstream>
 #include <lcdostream>
 #include <pnew.cpp>
+
+// expanded memory
 #include <xmem.h>
 
 using namespace std;
 
-
-
-// ** sequencer midi message storage
-struct SEQ_MIDIMSG_T {
-  byte  type;
-  byte  byte1;
-  byte  byte2;
-  byte  byte3;
-  
-  SEQ_MIDIMSG_T(const byte A, const byte B, const byte C, const byte D) :
-    type(A),byte1(B),byte2(C),byte3(D) {}
-};
 
 class MidiEvent {
 public:
@@ -54,6 +44,7 @@ public:
     return (e1.byte1 < e2.byte1) ? true : false;
   }
 };
+
 
 // enum for currently pushed button
 enum BUTTON_PRESSED {
@@ -79,16 +70,19 @@ enum RECORD_STATE_E {
 };
 
 // TODO: save and recall of global settings
-struct GLOBAL_SETTINGS_T {
-  uint16_t version;
+class GlobalSettings {
+public:
 
+  uint16_t version;
+  
   uint16_t  tempoBPM;      
   byte      enableTempoLed;//0-1 
   uint8_t   ledBrightness; //0-255
 };
 
 // TODO: save and recall of patten settings
-struct PATTERN_SETTINGS_T {
+class PatternSettings {
+public:
   // version specifier
   uint16_t version;
   
@@ -97,31 +91,33 @@ struct PATTERN_SETTINGS_T {
   // time sig
   uint8_t beatsPerBar;
   uint8_t beatUnit;
+  
 }; 
 
-struct SEQUENCER_POSITION_T {
-  volatile uint8_t        pulse;
-  volatile unsigned long  beat;
-  bool lastPulsePlayed; // true if events have already been sent out for this tick
+class SequencerPosition {
+public:
+  volatile unsigned long pulse;
+  unsigned long lastPulsePlayed; // set to tick value when notes are played
 };
-
 
 // midi event storage for the whole pattern
 typedef std::multimap<uint16_t,MidiEvent> PATTERN_EVENT_MAP;
 PATTERN_EVENT_MAP gMidiEvents;
 
+/*
 // recorded note set for the current tick
 // used to avoid recording duplicate events during a tick
 typedef std::set<MidiEvent, MidiEventComp> TICK_RECORD_SET;
 TICK_RECORD_SET gRecBuffer;
+*/
 
 // ** global sequencer variables for time / song position
-SEQUENCER_POSITION_T  gSeqPos;
-volatile bool         gProcessPatternBeat; // if true, pattern sequence beat process will happen in next loop() call
+SequencerPosition gSeqPos;
+volatile bool     gProcessPatternBeat; // if true, pattern sequence beat process will happen in next loop() call
 
 // 'global' tempo features, such as flashing tempo beat LED
-volatile bool     gProcessTempoBeat; // if true, tempo beat process logic will happen in next loop() call                  
-volatile uint8_t  gTempoPulse; // global index number of current pulse of current beat
+volatile bool           gProcessTempoBeat; // if true, tempo beat process logic will happen in next loop() call                  
+volatile uint8_t        gTempoPulse; // global index number of current pulse of current beat
                                   // used for flashing the tempo led on beat
 
 BUTTON_PRESSED  gCurBtnPressed; //enum
@@ -135,8 +131,8 @@ SEQUENCER_STATE_E gSeqState;
 RECORD_STATE_E    gRecordState;
 
 // structs for settings
-GLOBAL_SETTINGS_T   _globalSettings;
-PATTERN_SETTINGS_T  _patternSettings;
+GlobalSettings   _globalSettings;
+PatternSettings  _patternSettings;
 
 // ** utility macros
 
@@ -152,10 +148,11 @@ LiquidCrystal 	lcd(LCD_DPIN1, LCD_DPIN2, LCD_DPIN3, LCD_DPIN4, LCD_DPIN5, LCD_DP
 std::olcdstream lcdout(lcd);
 
 #if DEBUG
-    // init serial debugging port - must be on Mega2560 and have a ttl serial -> usb
-    // device connected on the TX3 Pin for this to work
-    std::ohserialstream serialmon(Serial3);
+// init serial debugging port - must be on Mega2560 and have a ttl serial -> usb
+// device connected on the TX3 Pin for this to work
+std::ohserialstream serialmon(Serial3);
 #endif
+
 
 
 /*
@@ -175,6 +172,7 @@ void setup() {
   
   lcdout << std::move((LCD_CHARS / 2) - (appname_count + appver_count) - 1, 0);
   lcdout << APP_NAME << " " << APP_VERSION;
+
 
   #if DEBUG
     Serial3.begin(SERIAL_DEBUG_CONSOLE_BAUD_RATE);
@@ -232,13 +230,19 @@ void setup() {
   pinMode(PIN_BTN_UP, INPUT);  digitalWrite(PIN_BTN_UP, HIGH);
   pinMode(PIN_BTN_DOWN, INPUT);  digitalWrite(PIN_BTN_DOWN, HIGH);
   pinMode(PIN_BTN_CLEAR, INPUT);  digitalWrite(PIN_BTN_CLEAR, HIGH);
+
   
+  pinMode(PIN_ENCODER_1, INPUT);  digitalWrite(PIN_ENCODER_1, HIGH);
+  pinMode(PIN_ENCODER_2, INPUT);  digitalWrite(PIN_ENCODER_2, HIGH);
+  pinMode(PIN_ENCODER_BTN, INPUT);  digitalWrite(PIN_ENCODER_BTN, HIGH);
+
   gProcessTempoBeat = false;
   gProcessPatternBeat = false;
   
   // setup pattern settings
   // TODO: persist and load from SD on boot
-  setSequencerToPosition(0,0);
+  moveSequencerToPulse(0);
+  
   _patternSettings.version = 0;
   initSequencerPattern();
   
@@ -258,7 +262,6 @@ void setup() {
   gSeqState = STOPPED;
   gRecordState = DISABLED;
   gSeqPos.pulse = 0;
-  gSeqPos.beat = 0;
   gSeqPos.lastPulsePlayed = 0;
   
   pinMode(PIN_TEMPO_LED, OUTPUT);
